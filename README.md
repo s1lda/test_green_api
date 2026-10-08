@@ -2,7 +2,7 @@
 
 Тестовое задание на позицию React frontend developer. Простой интерфейс в стиле Telegram Web: подключение инстанса GREEN-API, создание чата по номеру, отправка и получение текста.
 
-Задание допускает Telegram вместо MAX. Приложение использует **Telegram API GREEN-API**, а не MAX API из исходных ссылок и не Telegram Bot API.
+Задание допускает Telegram. Приложение использует **Telegram API GREEN-API**.
 
 ## Локальный запуск
 
