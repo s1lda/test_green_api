@@ -35,7 +35,7 @@ const day = (timestamp: number) =>
   });
 const statuses: Record<MessageStatus, string> = {
   sending: 'Отправляется',
-  queued: 'В очереди отправки',
+  queued: 'Принято сервером. Доставка ещё не подтверждена',
   sent: 'Отправлено',
   delivered: 'Доставлено',
   read: 'Прочитано',
@@ -349,7 +349,7 @@ export default function ChatApp({
                           >
                             {['unknown', 'failed'].includes(message.status) ? (
                               <CircleAlert size={15} />
-                            ) : message.status === 'sending' || message.status === 'queued' ? (
+                            ) : message.status === 'sending' ? (
                               <Clock3 size={14} />
                             ) : message.status === 'read' || message.status === 'delivered' ? (
                               <CheckCheck size={17} />

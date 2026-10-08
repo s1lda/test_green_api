@@ -80,12 +80,21 @@ test('complete chat flow, storage, search, reload and logout', async ({ page }) 
   ).toBeVisible();
   await expect.poll(api.isAcknowledged).toBe(true);
   expect(api.sent).toEqual([{ chatId: '12345', message: 'Привет! Как продвигается проект?' }]);
+  // This instance emits incoming messages only, with no outgoing status events.
+  // A successful SendMessage must still finish the visible sending state.
+  await expect(page.getByRole('log').getByLabel('Отправляется', { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('log').getByLabel('Принято сервером. Доставка ещё не подтверждена'),
+  ).toBeVisible();
   await page.screenshot({ path: '.artifacts/chat-desktop.png', fullPage: true });
   const storage = await page.evaluate(() => JSON.stringify({ ...sessionStorage, ...localStorage }));
   expect(storage).not.toContain('fake-test-token');
   await page.getByRole('textbox', { name: 'Поиск чатов' }).fill('unknown');
   await expect(page.getByText('Ничего не найдено')).toBeVisible();
   await login(page); // Reload requires credentials but retains this tab's messages.
+  await expect(
+    page.getByRole('log').getByLabel('Принято сервером. Доставка ещё не подтверждена'),
+  ).toBeVisible();
   await expect(
     page.getByRole('log').getByText('Привет! Сообщение получила 👋', { exact: true }),
   ).toBeVisible();
