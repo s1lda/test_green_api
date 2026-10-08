@@ -76,6 +76,7 @@ function ChatApp({ credentials, onLogout }: { credentials: Credentials; onLogout
   const [search, setSearch] = useState('');
   const [newChat, setNewChat] = useState(false);
   const [pollError, setPollError] = useState<string | null>(null);
+  const [instanceError, setInstanceError] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
@@ -98,13 +99,14 @@ function ChatApp({ credentials, onLogout }: { credentials: Credentials; onLogout
   useEffect(() => {
     const controller = new AbortController();
     void pollNotifications(api, controller.signal, body => {
-      if (body.typeWebhook === 'stateInstanceChanged' && body.stateInstance !== 'authorized') throw new Error('Telegram-инстанс отключён. Авторизуйте его в личном кабинете GREEN-API.');
+      if (body.typeWebhook === 'stateInstanceChanged') setInstanceError(body.stateInstance === 'authorized' ? null : 'Telegram-инстанс отключён. Авторизуйте его в личном кабинете GREEN-API.');
       commit(current => applyNotification(current, body));
     }, setPollError);
     return () => { controller.abort(); requestController.current?.abort(); };
     // The client and storage key are fixed for the lifetime of this session.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api]);
+  const connectionError = instanceError || pollError;
   useEffect(() => {
     if (scrollArea.current && nearBottom.current) scrollArea.current.scrollTop = scrollArea.current.scrollHeight;
   }, [active?.id, active?.messages.length]);
